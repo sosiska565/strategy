@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стратегия</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        #gameArea { display: flex; flex-wrap: wrap; margin-bottom: 20px; }
+        .building, .unit { width: 100px; height: 100px; margin: 10px; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #333; background-color: #ccc; }
+        .building { background-color: #8fbc8f; }
+        .unit { background-color: #4682b4; }
+        .info { margin-top: 20px; }
+        .resources { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        #builtBuildings, #trainedUnits { margin-top: 20px; }
+        h2 { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Стратегия</h1>
+    <div class="resources">
+        <div>Ресурсы: <span id="resourcesCount">100</span></div>
+        <div>Еда: <span id="foodCount">0</span></div>
+        <div>Солдаты: <span id="soldiersCount">0</span></div>
+    </div>
+    
+    <div id="gameArea"></div>
+    
+    <div class="info">
+        <h2>Доступные действия</h2>
+        <button id="buildFarm">Построить ферму (20 ресурсов)</button>
+        <button id="buildMine">Построить шахту (50 ресурсов)</button>
+        <button id="buildBarracks">Построить казарму (50 ресурсов)</button>
+        <button id="trainSoldier">Нанять солдата (10 еды)</button>
+        <button id="startBattle">Начать битву</button>
+    </div>
+
+    <div id="builtBuildings">
+        <h2>Построенные здания:</h2>
+    </div>
+    
+    <div id="trainedUnits">
+        <h2>Нанятые солдаты:</h2>
+    </div>
+
+    <script>
+        let resources = 100;
+        let food = 0;
+        let soldiers = 0;
+        let farms = 0;
+        let mines = 0;
+        const gameArea = document.getElementById('gameArea');
+        const resourcesCount = document.getElementById('resourcesCount');
+        const foodCount = document.getElementById('foodCount');
+        const soldiersCount = document.getElementById('soldiersCount');
+        const builtBuildingsDiv = document.getElementById('builtBuildings');
+        const trainedUnitsDiv = document.getElementById('trainedUnits');
+
+        function updateResources() {
+            resourcesCount.innerText = resources;
+            foodCount.innerText = food;
+            soldiersCount.innerText = soldiers;
+        }
+
+        function collectResources() {
+            food += farms * 2;
+            resources += mines * 3;
+            updateResources();
+        }
+
+        setInterval(collectResources, 5000);
+
+        document.getElementById('buildFarm').onclick = function() {
+            if (resources >= 20) {
+                resources -= 20;
+                farms++;
+                updateResources();
+                const farmDiv = document.createElement('div');
+                farmDiv.classList.add('building');
+                farmDiv.innerText = 'Ферма';
+                builtBuildingsDiv.appendChild(farmDiv);
+                alert('Вы построили ферму!');
+            } else {
+                alert('Недостаточно ресурсов!');
+            }
+        };
+
+        document.getElementById('buildMine').onclick = function() {
+            if (resources >= 50) {
+                resources -= 50;
+                mines++;
+                updateResources();
+                const mineDiv = document.createElement('div');
+                mineDiv.classList.add('building');
+                mineDiv.innerText = 'Шахта';
+                builtBuildingsDiv.appendChild(mineDiv);
+                alert('Вы построили шахту!');
+            } else {
+                alert('Недостаточно ресурсов!');
+            }
+        };
+
+        document.getElementById('buildBarracks').onclick = function() {
+            if (resources >= 50) {
+                resources -= 50;
+                const barracksDiv = document.createElement('div');
+                barracksDiv.classList.add('building');
+                barracksDiv.innerText = 'Казарма';
+                builtBuildingsDiv.appendChild(barracksDiv);
+                updateResources();
+                alert('Вы построили казарму!');
+            } else {
+                alert('Недостаточно ресурсов!');
+            }
+        };
+
+        document.getElementById('trainSoldier').onclick = function() {
+            if (food >= 10) {
+                food -= 10;
+                soldiers++;
+                updateResources();
+                const soldierDiv = document.createElement('div');
+                soldierDiv.classList.add('unit');
+                soldierDiv.innerText = `Солдат ${soldiers}`;
+                trainedUnitsDiv.appendChild(soldierDiv);
+                alert('Вы наняли солдата!');
+            } else {
+                alert('Недостаточно еды!');
+            }
+        };
+
+        document.getElementById('startBattle').onclick = function() {
+            if (soldiers > 0) {
+                const enemySoldiers = Math.floor(Math.random() * 5) + 1;
+                const result = soldiers >= enemySoldiers ? 'победили' : 'проиграли';
+                alert(`Вы ${result} битву против ${enemySoldiers} врагов!`);
+                if (result === 'победили') {
+                    resources += 20;
+                    updateResources();
+                }
+            } else {
+                alert('У вас нет солдат для битвы!');
+            }
+        };
+
+        updateResources();
+    </script>
+</body>
+</html>
